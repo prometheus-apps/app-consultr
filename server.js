@@ -87,7 +87,7 @@ app.get('/', (req, res) => {
       <ul class="text-left space-y-3 mb-8 text-gray-300 text-sm">
         <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">&#10003;</span>Track proposals &amp; contracts in one dashboard</li>
         <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">&#10003;</span>Manage client communications</li>
-        <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">&#10003;</span>Full lifetime access — no subscription</li>
+        <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">&#10003;</span>Full lifetime access &mdash; no subscription</li>
         <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">&#10003;</span>Early backer pricing (limited spots)</li>
       </ul>
       <button
@@ -95,7 +95,7 @@ app.get('/', (req, res) => {
         id="checkout-btn"
         class="w-full bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-4 px-8 rounded-xl text-lg transition-all duration-200 shadow-lg hover:shadow-yellow-400/20 cursor-pointer"
       >
-        Get Early Access — $2
+        Get Early Access &mdash; $2
       </button>
     </div>
     <p class="text-gray-600 text-xs">Secure payment via Stripe &middot; Instant access after purchase</p>
@@ -116,12 +116,12 @@ app.get('/', (req, res) => {
           window.location.href = data.url;
         } else {
           alert('Checkout failed. Please try again.');
-          btn.textContent = 'Get Early Access — $2';
+          btn.textContent = 'Get Early Access \u2014 $2';
           btn.disabled = false;
         }
       } catch (err) {
         alert('Something went wrong. Please try again.');
-        btn.textContent = 'Get Early Access — $2';
+        btn.textContent = 'Get Early Access \u2014 $2';
         btn.disabled = false;
       }
     });
@@ -136,7 +136,7 @@ app.post('/api/checkout', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: 'price_1TAdrx4Ho2w0775bI6seIN2U',
+        price: 'price_1TB0Qz4Ho2w0775bU661sSlo',
         quantity: 1,
       }],
       mode: 'payment',
@@ -173,7 +173,7 @@ app.get('/success', async (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Successful — Consultr</title>
+  <title>Payment Successful \u2014 Consultr</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-950 min-h-screen flex items-center justify-center">
@@ -197,14 +197,14 @@ app.get('/cancel', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Cancelled — Consultr</title>
+  <title>Payment Cancelled \u2014 Consultr</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-950 min-h-screen flex items-center justify-center">
   <div class="max-w-md w-full mx-auto px-6 py-16 text-center">
     <div class="text-6xl mb-6">&#x274C;</div>
     <h1 class="text-3xl font-bold text-white mb-3">Payment Cancelled</h1>
-    <p class="text-gray-400 mb-8">No worries — you haven't been charged.</p>
+    <p class="text-gray-400 mb-8">No worries \u2014 you haven't been charged.</p>
     <a href="/" class="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-3 px-8 rounded-xl transition-all duration-200">
       Back to Consultr
     </a>
