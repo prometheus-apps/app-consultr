@@ -52,25 +52,33 @@ app.get('/api/checkout', (req, res) => {
 app.post('/api/checkout', async (req, res) => {
   try {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    const session = await stripe.checkout.sessions.create({
+    const priceId = process.env.STRIPE_PRICE_ID;
+
+    const sessionConfig = {
       payment_method_types: ['card'],
-      line_items: [{
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/cancel`,
+      customer_email: req.body.email || undefined,
+    };
+
+    if (priceId) {
+      sessionConfig.line_items = [{ price: priceId, quantity: 1 }];
+    } else {
+      sessionConfig.line_items = [{
         price_data: {
           currency: 'usd',
           product_data: {
             name: 'Consultr',
             description: 'Every client, every deal—one clear view. One-time access to Consultr.',
           },
-          unit_amount: 200, // $2.00
+          unit_amount: 200,
         },
         quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.protocol}://${req.get('host')}/cancel`,
-      customer_email: req.body.email || undefined,
-    });
+      }];
+    }
 
+    const session = await stripe.checkout.sessions.create(sessionConfig);
     res.json({ url: session.url });
   } catch (err) {
     console.error('Checkout error:', err);
@@ -104,13 +112,13 @@ app.get('/success', async (req, res) => {
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
   <div class="text-center p-8 max-w-md">
-    <div class="text-6xl mb-4">✅</div>
+    <div class="text-6xl mb-4">\u2705</div>
     <h1 class="text-3xl font-bold mb-2 text-gray-900">Payment Successful!</h1>
     <p class="text-gray-600 mb-2">Thank you for purchasing Consultr${customerEmail ? `, ${customerEmail}` : ''}.</p>
     <p class="text-gray-500 text-sm mb-6">You'll receive a confirmation email shortly.</p>
-    <p class="text-gray-400 text-xs mb-4">Redirecting you back in 5 seconds…</p>
+    <p class="text-gray-400 text-xs mb-4">Redirecting you back in 5 seconds\u2026</p>
     <a href="https://systemprometheus.com/l/consultr" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
-      Back to Consultr →
+      Back to Consultr \u2192
     </a>
   </div>
 </body>
@@ -129,11 +137,11 @@ app.get('/cancel', (req, res) => {
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
   <div class="text-center p-8 max-w-md">
-    <div class="text-6xl mb-4">↩️</div>
+    <div class="text-6xl mb-4">\u21a9\ufe0f</div>
     <h1 class="text-3xl font-bold mb-2 text-gray-900">Payment Cancelled</h1>
-    <p class="text-gray-600 mb-6">No worries — you haven't been charged.</p>
+    <p class="text-gray-600 mb-6">No worries \u2014 you haven't been charged.</p>
     <a href="https://systemprometheus.com/l/consultr" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
-      Back to Consultr →
+      Back to Consultr \u2192
     </a>
   </div>
 </body>
