@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultr — Every client, every deal—one clear view.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2332;
+    --blue: #3b82f6;
+    --blue-dark: #2563eb;
+    --blue-light: #eff6ff;
+    --accent: #0ea5e9;
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --bg-card: #ffffff;
+    --text: #1a2332;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px rgba(26,35,50,0.08), 0 4px 16px rgba(26,35,50,0.06);
+    --shadow-card: 0 2px 8px rgba(26,35,50,0.08), 0 8px 32px rgba(26,35,50,0.06);
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--accent) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: -0.5px;
+  }
+  .logo-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+  .logo-name span { color: var(--blue); }
+  .nav-btn {
+    background: #F59E0B;
+    color: #1a2332;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(160deg, #f0f7ff 0%, #e8f0fe 40%, #f8fafc 100%);
+    padding: 88px 24px 80px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .hero-eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--blue);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5.5vw, 60px);
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    max-width: 820px;
+    margin: 0 auto 20px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: clamp(17px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 580px;
+    margin: 0 auto 44px;
+    line-height: 1.6;
+  }
+  .hero-form {
+    max-width: 480px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+  }
+  .hero-form-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .form-submit {
+    width: 100%;
+    background: #F59E0B;
+    color: #1a2332;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    letter-spacing: 0.2px;
+  }
+  .form-submit:hover { background: #d97706; }
+  .form-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+  .form-note {
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 10px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 56px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    display: block;
+  }
+  .hero-stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* SECTION SHARED */
+  section { padding: 80px 24px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* PROBLEM */
+  .problem { background: var(--navy); color: white; }
+  .problem .section-label { color: #93c5fd; }
+  .problem .section-title { color: white; }
+  .problem .section-sub { color: #94a3b8; }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .problem-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 28px 24px;
+  }
+  .problem-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+  .problem-card h3 {
+    font-size: 17px; font-weight: 700; color: white;
+    margin-bottom: 10px; line-height: 1.3;
+  }
+  .problem-card p { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+
+  /* SOLUTION */
+  .solution { background: var(--bg-alt); }
+  .solution-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .solution-visual {
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+  }
+  .dashboard-bar {
+    height: 10px; border-radius: 5px;
+    background: var(--border); margin-bottom: 16px; overflow: hidden;
+  }
+  .dashboard-bar-fill {
+    height: 100%; border-radius: 5px;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+  }
+  .dashboard-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--bg-alt); border-radius: 8px;
+    margin-bottom: 8px; border: 1px solid var(--border);
+  }
+  .dashboard-row-left { display: flex; align-items: center; gap: 10px; }
+  .dash-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dash-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .dash-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-yellow { background: #fef9c3; color: #854d0e; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .dashboard-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text-light); margin-bottom: 14px;
+  }
+  .solution-content .section-title { margin-top: 0; }
+  .solution-points { list-style: none; margin-top: 24px; }
+  .solution-points li {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 14px; font-size: 15px; color: var(--text-muted); line-height: 1.5;
+  }
+  .solution-points li strong { color: var(--text); }
+  .sol-check { color: var(--blue); font-size: 16px; margin-top: 1px; flex-shrink: 0; font-weight: 700; }
+
+  /* BENEFITS */
+  .benefits { background: white; }
+  .benefits-header { text-align: center; margin-bottom: 52px; }
+  .benefits-header .section-sub { margin: 0 auto; }
+  .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .benefit-card {
+    background: white; border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 32px 26px; box-shadow: var(--shadow);
+  }
+  .benefit-icon-wrap {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--blue-light); display: flex; align-items: center;
+    justify-content: center; font-size: 22px; margin-bottom: 20px;
+  }
+  .benefit-card h3 {
+    font-size: 18px; font-weight: 800; color: var(--navy);
+    margin-bottom: 10px; letter-spacing: -0.3px;
+  }
+  .benefit-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+  /* HOW IT WORKS */
+  .how {
+    background: linear-gradient(160deg, #f0f7ff 0%, #f8fafc 100%);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .how-header { text-align: center; margin-bottom: 56px; }
+  .how-header .section-sub { margin: 0 auto; }
+  .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .how-step { text-align: center; padding: 0 12px; }
+  .how-step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    color: white; font-size: 20px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+  }
+  .how-step h3 { font-size: 17px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+  .how-step p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+  /* SOCIAL PROOF */
+  .social-proof { background: white; text-align: center; }
+  .proof-number {
+    font-size: clamp(48px, 6vw, 72px); font-weight: 900; color: var(--navy);
+    letter-spacing: -2px; display: block; line-height: 1; margin-bottom: 6px;
+  }
+  .proof-number span { color: var(--blue); }
+  .proof-tagline { font-size: 20px; font-weight: 600; color: var(--text-muted); margin-bottom: 52px; }
+  .testimonials {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; max-width: 960px; margin: 0 auto;
+  }
+  .testimonial {
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 22px; text-align: left;
+  }
+  .testimonial-stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; letter-spacing: 1px; }
+  .testimonial-text {
+    font-size: 14px; color: var(--text-muted); line-height: 1.65;
+    margin-bottom: 16px; font-style: italic;
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 10px; }
+  .author-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .author-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+  .author-role { font-size: 12px; color: var(--text-light); }
+  .proof-logos {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin-top: 52px; flex-wrap: wrap;
+  }
+  .proof-logos-label {
+    font-size: 12px; font-weight: 600; color: var(--text-light);
+    letter-spacing: 1px; text-transform: uppercase; margin-right: 4px;
+  }
+  .proof-logo-pill {
+    background: var(--bg-alt); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 18px; font-size: 13px;
+    font-weight: 700; color: var(--text-muted); letter-spacing: -0.2px;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 100%);
+    padding: 88px 24px; text-align: center;
+  }
+  .cta-section .section-label { color: #93c5fd; }
+  .cta-section .section-title { color: white; max-width: 640px; margin: 0 auto 16px; }
+  .cta-section .section-sub { color: #94a3b8; margin: 0 auto 44px; max-width: 480px; }
+  .cta-form {
+    max-width: 440px; margin: 0 auto;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px; padding: 32px;
+  }
+  .cta-form .form-submit { background: #F59E0B; color: #1a2332; }
+  .cta-form .form-note { color: rgba(255,255,255,0.35); }
+  .cta-form .hero-form-title { color: white; }
+  .cta-perks {
+    display: flex; justify-content: center;
+    gap: 28px; margin-top: 32px; flex-wrap: wrap;
+  }
+  .cta-perk { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #94a3b8; font-weight: 500; }
+  .cta-perk-check { color: #4ade80; font-size: 14px; font-weight: 700; }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 36px 24px;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-brand { display: flex; flex-direction: column; gap: 4px; }
+  .footer-logo { display: flex; align-items: center; gap: 8px; }
+  .footer-logo-mark {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 12px;
+  }
+  .footer-logo-name { font-size: 16px; font-weight: 800; color: white; letter-spacing: -0.3px; }
+  .footer-tagline { font-size: 13px; color: #64748b; }
+  .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .footer-powered { font-size: 12px; color: #475569; font-weight: 500; }
+  .footer-powered span { color: #64748b; font-weight: 600; }
+  .footer-copy { font-size: 12px; color: #334155; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .problem-grid { grid-template-columns: 1fr; gap: 16px; }
+    .solution-grid { grid-template-columns: 1fr; gap: 36px; }
+    .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
+    .how-steps { grid-template-columns: 1fr; gap: 28px; }
+    .testimonials { grid-template-columns: 1fr; gap: 16px; }
+    .hero-stats { gap: 24px; }
+  }
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .nav-btn { padding: 8px 16px; font-size: 13px; }
+    .hero { padding: 60px 16px 56px; }
+    .hero-form { padding: 22px 18px 18px; }
+    section { padding: 60px 16px; }
+    .cta-section { padding: 60px 16px; }
+    .cta-form { padding: 22px 18px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+    .footer-right { align-items: flex-start; }
+    .cta-perks { flex-direction: column; align-items: center; gap: 12px; }
+    .proof-logos { gap: 8px; }
+    .proof-logos-label { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">C</div>
+      <span class="logo-name">Consult<span>r</span></span>
+    </a>
+    <a href="#" data-checkout="true" class="nav-btn">Get Access — $2 →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-dot"></span>
+    Now accepting early access applications
+  </div>
+  <h1>Every client, every deal—<em>one clear view.</em></h1>
+  <p class="hero-sub">Stop juggling spreadsheets, inboxes, and scattered docs. Consultr gives freelance consultants a single intelligent dashboard to manage proposals, contracts, and client relationships — effortlessly.</p>
+
+  <div class="hero-form">
+    <p class="hero-form-title">✦ Get founding access — just $2, one-time</p>
+    <button data-checkout="true" class="form-submit" style="width:100%;margin-top:0;">Get Founding Access — $2 →</button>
+    <p class="form-note">🔒 One-time payment · No subscription ever · Instant access</p>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-num">2,400+</span>
+      <span class="hero-stat-label">Consultants on waitlist</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">$2</span>
+      <span class="hero-stat-label">One-time access</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">1 dashboard</span>
+      <span class="hero-stat-label">For everything client-related</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="section-inner">
+    <span class="section-label">● The Problem</span>
+    <h2 class="section-title">Running your practice shouldn’t feel like a second job.</h2>
+    <p class="section-sub">Independent consultants are drowning in admin — losing billable hours to tools that were never built for how they actually work.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <span class="problem-icon">📂</span>
+        <h3>Proposals scattered across email threads and folders</h3>
+        <p>You’re sending proposals from Gmail, storing drafts in Google Docs, and chasing approvals over WhatsApp. By the time a deal closes, you’ve lost hours just finding the right version.</p>
+      </div>
+      <div class="problem-card">
+        <span class="problem-icon">📋</span>
+        <h3>Contracts signed, then forgotten — until something goes wrong</h3>
+        <p>Your contracts live in DocuSign, Dropbox, or an email attachment from six months ago. When a client dispute happens, you’re scrambling instead of confident.</p>
+      </div>
+      <div class="problem-card">
+        <span class="problem-icon">💬</span>
+        <h3>Client context is always one more click — or tab — away</h3>
+        <p>Every client relationship is spread across your inbox, notes, and memory. There’s no single place to see history, status, and next steps — so important things fall through the cracks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution">
+  <div class="section-inner">
+    <div class="solution-grid">
+      <div class="solution-visual">
+        <div class="dashboard-title">● Client Pipeline — Active</div>
+        <div class="dashboard-row">
+          <div class="dashboard-row-left">
+            <div class="dash-dot" style="background:#3b82f6"></div>
+            <span class="dash-label">Acme Corp — Proposal Sent</span>
+          </div>
+          <span class="dash-badge badge-yellow">Awaiting</span>
+        </div>
+        <div class="dashboard-row">
+          <div class="dashboard-row-left">
+            <div class="dash-dot" style="background:#22c55e"></div>
+            <span class="dash-label">Nexus Media — Contract Active</span>
+          </div>
+          <span class="dash-badge badge-green">Signed</span>
+        </div>
+        <div class="dashboard-row">
+          <div class="dashboard-row-left">
+            <div class="dash-dot" style="background:#0ea5e9"></div>
+            <span class="dash-label">Vertex Partners — In Scope</span>
+          </div>
+          <span class="dash-badge badge-blue">Discovery</span>
+        </div>
+        <div class="dashboard-row">
+          <div class="dashboard-row-left">
+            <div class="dash-dot" style="background:#f59e0b"></div>
+            <span class="dash-label">Brightfield Co — Follow Up</span>
+          </div>
+          <span class="dash-badge badge-yellow">Pending</span>
+        </div>
+        <div style="margin-top:18px;">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px;">Revenue this quarter</div>
+          <div class="dashboard-bar"><div class="dashboard-bar-fill" style="width:72%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;font-weight:600;margin-top:4px;"><span>$36,000 earned</span><span>Goal: $50k</span></div>
+        </div>
+      </div>
+      <div class="solution-content">
+        <span class="section-label">✦ The Solution</span>
+        <h2 class="section-title">Introducing Consultr — your complete client command center.</h2>
+        <p class="section-sub">Consultr brings proposals, contracts, communications, and pipeline tracking under one roof. Built specifically for independent consultants who need clarity, not complexity.</p>
+        <ul class="solution-points">
+          <li><span class="sol-check">✓</span><span><strong>Unified client profiles</strong> — every email, contract, and note linked to the right client automatically.</span></li>
+          <li><span class="sol-check">✓</span><span><strong>Proposal &amp; contract hub</strong> — create, send, and track from draft to signed in one place.</span></li>
+          <li><span class="sol-check">✓</span><span><strong>Deal pipeline view</strong> — always know exactly where each client stands and what needs your attention today.</span></li>
+          <li><span class="sol-check">✓</span><span><strong>Smart reminders</strong> — no more forgotten follow-ups or missed renewal dates costing you revenue.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="section-inner">
+    <div class="benefits-header">
+      <span class="section-label">✦ Why Consultr</span>
+      <h2 class="section-title">Work less on admin. Deliver more for clients.</h2>
+      <p class="section-sub">Consultr is engineered around the real workflow of independent professionals — not enterprise teams.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap">⚡</div>
+        <h3>Close deals faster</h3>
+        <p>Send polished, professional proposals in minutes with templates built for consultants. Track opens and approvals in real time — so you always follow up at exactly the right moment.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap">🔒</div>
+        <h3>Never lose a contract again</h3>
+        <p>Every signed agreement, NDA, and SOW is stored, searchable, and linked to the client. Expiry alerts and renewal reminders protect you from surprises and gaps in coverage.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap">🎯</div>
+        <h3>Full clarity on every relationship</h3>
+        <p>See the full history of every client at a glance — past work, open items, communications, and pipeline status. Walk into every call prepared, confident, and professional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-inner">
+    <div class="how-header">
+      <span class="section-label">● How It Works</span>
+      <h2 class="section-title">Up and running in under 10 minutes.</h2>
+      <p class="section-sub">No complex onboarding. No IT team required. Just sign in and start seeing your practice clearly.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <h3>Connect your existing work</h3>
+        <p>Import your contacts, link your email, and upload any existing contracts or proposals. Consultr organizes everything automatically by client and status.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <h3>Build your pipeline in seconds</h3>
+        <p>Add your active deals, in-progress proposals, and current clients. Your dashboard instantly shows you a live view of your entire practice — what’s hot, what needs action, what’s closing.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <h3>Focus on delivery, not admin</h3>
+        <p>Let Consultr handle the reminders, tracking, and record-keeping. You get back the hours you were spending on scattered tools — and spend them doing the work you’re actually great at.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="social-proof">
+  <div class="section-inner">
+    <span class="proof-number">2,400<span>+</span></span>
+    <p class="proof-tagline">independent consultants already on the waitlist</p>
+    <div class="testimonials">
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">“I’ve tried five different tools for managing my consulting pipeline. None of them understood how I actually work. Consultr finally gets it — it’s like having an EA for my whole practice.”</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">MK</div>
+          <div><div class="author-name">Marcus K.</div><div class="author-role">Strategy Consultant, NYC</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">“I was running my entire practice from an Airtable spreadsheet and three different email folders. The demo alone showed me how much time I’ve been wasting. Can’t wait for the full launch.”</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SR</div>
+          <div><div class="author-name">Sophia R.</div><div class="author-role">Freelance HR Consultant, London</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">“The contract tracking alone is worth it. I had a client dispute last year because I couldn’t find the original scope doc quickly enough. That won’t happen again with Consultr.”</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">JT</div>
+          <div><div class="author-name">James T.</div><div class="author-role">Independent Finance Consultant</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="proof-logos">
+      <span class="proof-logos-label">Trusted by consultants from</span>
+      <span class="proof-logo-pill">McKinsey Alumni</span>
+      <span class="proof-logo-pill">Deloitte Alumni</span>
+      <span class="proof-logo-pill">Accenture Alumni</span>
+      <span class="proof-logo-pill">Big 4 Alums</span>
+      <span class="proof-logo-pill">Indie Operators</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="section-inner">
+    <span class="section-label">→ Early Access</span>
+    <h2 class="section-title">Ready to run your practice with total clarity?</h2>
+    <p class="section-sub">Get instant access for just $2 — one-time, no subscription, no recurring fees.</p>
+    <div class="cta-form">
+      <p class="hero-form-title" style="text-align:center;margin-bottom:20px;">✦ Claim your founding member spot</p>
+      <button data-checkout="true" class="form-submit" style="width:100%;">Get Access Now — $2 →</button>
+      <p class="form-note">🔒 One-time payment · No subscription ever · Instant access</p>
+    </div>
+    <div class="cta-perks">
+      <span class="cta-perk"><span class="cta-perk-check">✓</span> Full lifetime access</span>
+      <span class="cta-perk"><span class="cta-perk-check">✓</span> Priority onboarding</span>
+      <span class="cta-perk"><span class="cta-perk-check">✓</span> Locked-in launch pricing</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-logo-mark">C</div>
+        <span class="footer-logo-name">Consultr</span>
+      </div>
+      <span class="footer-tagline">Every client, every deal—one clear view.</span>
+    </div>
+    <div class="footer-right">
+      <span class="footer-powered">Powered by <span>Prometheus AI</span></span>
+      <span class="footer-copy">&copy; 2025 Consultr. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Stripe checkout handler — wire all [data-checkout] elements
+document.querySelectorAll('[data-checkout="true"]').forEach(function(el) {
+  el.addEventListener('click', async function(e) {
+    e.preventDefault();
+    var original = el.innerHTML;
+    if (el.tagName === 'BUTTON') el.disabled = true;
+    el.textContent = 'Loading...';
+    try {
+      var res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      var data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Checkout failed. Please try again.');
+        el.innerHTML = original;
+        if (el.tagName === 'BUTTON') el.disabled = false;
+      }
+    } catch(err) {
+      alert('Something went wrong. Please try again.');
+      el.innerHTML = original;
+      if (el.tagName === 'BUTTON') el.disabled = false;
+    }
+  });
+});
+</script>
+</body>
+</html>
