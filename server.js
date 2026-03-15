@@ -1,12 +1,40 @@
 const express = require('express');
-const { neon } = require('@neondatabase/serverless');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cors = require('cors');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const sql = neon(process.env.DATABASE_URL);
 
+// Webhook route MUST be before express.json() middleware
+app.post('/webhook',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      console.log('Payment completed:', session.id, 'Customer:', session.customer_email);
+    }
+
+    res.json({ received: true });
+  }
+);
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,66 +44,29 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Landing pages — reads from platform DB
-app.get('/l/:slug', async (req, res) => {
-  try {
-    const [company] = await sql`
-      SELECT landing_page_html FROM companies WHERE slug = ${req.params.slug}
-    `;
-    if (!company || !company.landing_page_html) {
-      return res.status(404).send('Page not found');
-    }
-    // Inject checkout handler for [data-checkout="true"] buttons
-    const checkoutScript = `<script>
-document.querySelectorAll('[data-checkout="true"]').forEach(function(el) {
-  el.addEventListener('click', async function(e) {
-    e.preventDefault();
-    var original = el.innerHTML;
-    if (el.tagName === 'BUTTON') el.disabled = true;
-    el.textContent = 'Loading...';
-    try {
-      var r = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
-      });
-      var data = await r.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Checkout failed. Please try again.');
-        el.innerHTML = original;
-        if (el.tagName === 'BUTTON') el.disabled = false;
-      }
-    } catch(err) {
-      alert('Something went wrong. Please try again.');
-      el.innerHTML = original;
-      if (el.tagName === 'BUTTON') el.disabled = false;
-    }
-  });
-});
-<\/script>`;
-    const html = company.landing_page_html.replace('</body>', checkoutScript + '\n</body>');
-    res.send(html);
-  } catch (err) {
-    console.error('Landing page error:', err);
-    res.status(500).send('Error loading page');
-  }
-});
-
-// Stripe Checkout — $2 one-time payment
+// Stripe Checkout endpoint
 app.post('/api/checkout', async (req, res) => {
   try {
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: process.env.STRIPE_PRICE_ID || 'price_1TBBgn4Ho2w0775bfVtMOc2U',
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Consultr',
+            description: 'Every client, every deal—one clear view. One-time access to Consultr.',
+          },
+          unit_amount: 200, // $2.00
+        },
         quantity: 1,
       }],
       mode: 'payment',
       success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.protocol}://${req.get('host')}/l/consultr`,
+      cancel_url: `${req.protocol}://${req.get('host')}/cancel`,
+      customer_email: req.body.email || undefined,
     });
+
     res.json({ url: session.url });
   } catch (err) {
     console.error('Checkout error:', err);
@@ -83,52 +74,81 @@ app.post('/api/checkout', async (req, res) => {
   }
 });
 
-// Success page — shown after payment, redirects back to landing page
+// Success page — shows confirmation then redirects to landing page
 app.get('/success', async (req, res) => {
   const { session_id } = req.query;
-  if (session_id) {
+  let customerEmail = '';
+
+  if (session_id && process.env.STRIPE_SECRET_KEY) {
     try {
-      await stripe.checkout.sessions.retrieve(session_id);
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+      customerEmail = session.customer_email || '';
     } catch (err) {
-      console.error('Session retrieval error:', err);
+      console.error('Session retrieval failed:', err);
     }
   }
+
   res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Consultr!</title>
-  <script src="https://cdn.tailwindcss.com"><\/script>
-  <meta http-equiv="refresh" content="5;url=/l/consultr">
+  <title>Payment Successful — Consultr</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta http-equiv="refresh" content="5;url=https://systemprometheus.com/l/consultr">
 </head>
-<body class="min-h-screen flex items-center justify-center" style="background:linear-gradient(160deg,#f0f7ff 0%,#e8f0fe 40%,#f8fafc 100%)">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
   <div class="text-center p-8 max-w-md">
-    <div style="font-size:64px;margin-bottom:16px;">🎉</div>
-    <h1 style="font-size:28px;font-weight:900;color:#1a2332;margin-bottom:12px;letter-spacing:-0.5px;">You're a founding member!</h1>
-    <p style="color:#64748b;font-size:16px;line-height:1.6;margin-bottom:8px;">Welcome to Consultr. Your $2 founding access is confirmed.</p>
-    <p style="color:#94a3b8;font-size:13px;margin-bottom:28px;">Redirecting you back in 5 seconds...</p>
-    <a href="/l/consultr" style="display:inline-block;background:#F59E0B;color:#1a2332;padding:12px 28px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;">Back to Consultr →</a>
+    <div class="text-6xl mb-4">✅</div>
+    <h1 class="text-3xl font-bold mb-2 text-gray-900">Payment Successful!</h1>
+    <p class="text-gray-600 mb-2">Thank you for purchasing Consultr${customerEmail ? `, ${customerEmail}` : ''}.</p>
+    <p class="text-gray-500 text-sm mb-6">You'll receive a confirmation email shortly.</p>
+    <p class="text-gray-400 text-xs mb-4">Redirecting you back in 5 seconds…</p>
+    <a href="https://systemprometheus.com/l/consultr" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+      Back to Consultr →
+    </a>
   </div>
 </body>
 </html>`);
 });
 
-// Cancel — redirect back to landing page
+// Cancel page
 app.get('/cancel', (req, res) => {
-  res.redirect('/l/consultr');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Cancelled — Consultr</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="text-center p-8 max-w-md">
+    <div class="text-6xl mb-4">↩️</div>
+    <h1 class="text-3xl font-bold mb-2 text-gray-900">Payment Cancelled</h1>
+    <p class="text-gray-600 mb-6">No worries — you haven't been charged.</p>
+    <a href="https://systemprometheus.com/l/consultr" class="bg-yellow-400 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+      Back to Consultr →
+    </a>
+  </div>
+</body>
+</html>`);
 });
 
-// Error handler
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err.stack);
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Consultr server running on port ${PORT}`);
 });
 
+// Graceful shutdown
 process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
   process.exit(0);
 });
