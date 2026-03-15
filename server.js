@@ -44,7 +44,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Stripe Checkout endpoint
+// Stripe Checkout endpoint (POST creates session, GET confirms route exists)
+app.get('/api/checkout', (req, res) => {
+  res.json({ status: 'ok', method: 'POST to this endpoint to create a checkout session' });
+});
+
 app.post('/api/checkout', async (req, res) => {
   try {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
